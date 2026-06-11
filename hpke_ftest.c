@@ -239,6 +239,11 @@ int main(int argc, char *argv[])
     const char *suite_flag = "x25519";
     int i = 1;
 
+    if (argc <= 1) {
+        fprintf(stderr, "Usage: %s [-suite <suite>] keygen|encrypt|decrypt\n", argv[0]);
+        exit(1);
+    }
+
     if (strcmp(argv[i], "-suite") == 0) {
         suite_flag = argv[i + 1];
         i += 2;
