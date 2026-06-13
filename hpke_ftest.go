@@ -335,30 +335,30 @@ func keygen(s suiteConfig) error {
 		return fmt.Errorf("genKey: %w", err)
 	}
 
-	if err := os.WriteFile("go_receiver.pub", pubBytes, 0644); err != nil {
+	if err := os.WriteFile("go_recipient.pub", pubBytes, 0644); err != nil {
 		return err
 	}
-	if err := os.WriteFile("go_receiver.priv", privBytes, 0600); err != nil {
+	if err := os.WriteFile("go_recipient.priv", privBytes, 0600); err != nil {
 		return err
 	}
 
 	fmt.Printf("keygen: suite = %s\n", s.name)
-	fmt.Printf("go_receiver.pub (%d bytes)\n", len(pubBytes))
-	fmt.Printf("go_receiver.priv (%d bytes)\n", len(privBytes))
+	fmt.Printf("go_recipient.pub (%d bytes)\n", len(pubBytes))
+	fmt.Printf("go_recipient.priv (%d bytes)\n", len(privBytes))
 	return nil
 }
 
 func encrypt(s suiteConfig) error {
 	aad := makeAAD(s.name)
 
-	pubBytes, err := os.ReadFile("c_receiver.pub")
+	pubBytes, err := os.ReadFile("c_recipient.pub")
 	if err != nil {
-		return fmt.Errorf("read c_receiver.pub: %w", err)
+		return fmt.Errorf("read c_recipient.pub: %w", err)
 	}
 
 	recPub, err := s.pubFromBytes(pubBytes)
 	if err != nil {
-		return fmt.Errorf("parse c_receiver.pub: %w", err)
+		return fmt.Errorf("parse c_recipient.pub: %w", err)
 	}
 
 	enc, sender, err := hpke.NewSender(recPub, s.kdf, s.aead, info)
@@ -389,9 +389,9 @@ func encrypt(s suiteConfig) error {
 func decrypt(s suiteConfig) error {
 	aad := makeAAD(s.name)
 
-	privBytes, err := os.ReadFile("go_receiver.priv")
+	privBytes, err := os.ReadFile("go_recipient.priv")
 	if err != nil {
-		return fmt.Errorf("read go_receiver.priv: %w", err)
+		return fmt.Errorf("read go_recipient.priv: %w", err)
 	}
 
 	enc, err := os.ReadFile("go_enc.bin")
@@ -406,7 +406,7 @@ func decrypt(s suiteConfig) error {
 
 	recPriv, err := s.privFromBytes(privBytes)
 	if err != nil {
-		return fmt.Errorf("parse go_receiver.priv: %w", err)
+		return fmt.Errorf("parse go_recipient.priv: %w", err)
 	}
 
 	receiver, err := hpke.NewRecipient(enc, recPriv, s.kdf, s.aead, info)

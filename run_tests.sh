@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-C_BIN="$(realpath ./hpke)"
-GO_BIN="$(realpath ./hpke_go)"
-WORKDIR="$(mktemp -d)"
+C_BIN="$(realpath ./hpke_ftest_c)"
+GO_BIN="$(realpath ./hpke_ftest_go)"
+: ${WORKDIR="$(mktemp -d)"}
 PASSED=0
 FAILED=0
 
@@ -39,5 +39,5 @@ done
 
 TOTAL=$(( PASSED + FAILED ))
 echo ""
-echo "$PASSED / $TOTAL passed"
+echo "$PASSED / $TOTAL passed, WORKDIR is $WORKDIR"
 [[ $FAILED -eq 0 ]]
